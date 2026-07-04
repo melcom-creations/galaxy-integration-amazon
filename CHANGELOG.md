@@ -1,5 +1,21 @@
 # Changelog
 
+All notable changes to this plugin will be documented in this file.
+
+---
+
+## Version 2.1.4-64bit
+
+### Fixed
+- Fixed `ModuleNotFoundError: No module named 'galaxy'` crashing the plugin on startup. `plugin.py` added the
+  bundled dependency folder to `sys.path` as `"Modules"` (capital M), while the actual folder — and every
+  other reference to it in the codebase (`authentication.py`) — is named `modules` (lowercase). This likely
+  went unnoticed while the mismatch was silently tolerated by case-insensitive folder lookups, but broke
+  outright wherever that no longer holds (e.g. after the `modules/` folder was rebuilt from scratch during
+  the 2.1.3 dependency rebuild). Corrected to `modules` (lowercase) to match every other reference.
+
+---
+
 ## Version 2.1.3-64bit
 
 ### Overview

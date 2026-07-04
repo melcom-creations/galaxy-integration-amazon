@@ -4,9 +4,9 @@ import logging
 import sys
 import webbrowser
 
-# Add the Modules directory to sys.path so bundled dependencies resolve locally.
+# Add the modules directory to sys.path so bundled dependencies resolve locally.
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "Modules"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "modules"))
 
 from galaxy.api.plugin import Plugin, create_and_run_plugin
 from galaxy.api.consts import Feature, Platform, LicenseType, LocalGameState, OSCompatibility
