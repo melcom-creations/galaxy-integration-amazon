@@ -6,6 +6,9 @@ All notable changes to this plugin will be documented in this file.
 
 ## Version 2.1.4-64bit
 
+### Overview
+Maintenance release focused on startup reliability for bundled dependency loading. The plugin now resolves the dependency folder name consistently, preventing early import failures across packaging variants.
+
 ### Fixed
 - Fixed `ModuleNotFoundError: No module named 'galaxy'` crashing the plugin on startup. `plugin.py` added the
   bundled dependency folder to `sys.path` as `"Modules"` (capital M), while the actual folder — and every
@@ -13,6 +16,14 @@ All notable changes to this plugin will be documented in this file.
   went unnoticed while the mismatch was silently tolerated by case-insensitive folder lookups, but broke
   outright wherever that no longer holds (e.g. after the `modules/` folder was rebuilt from scratch during
   the 2.1.3 dependency rebuild). Corrected to `modules` (lowercase) to match every other reference.
+
+### Technical Breakdown
+
+#### 1. Module path casing alignment
+Startup dependency bootstrap now uses the same folder naming convention as the rest of the codebase, eliminating case-mismatch startup breakage.
+
+#### 2. Import bootstrap resilience
+By aligning the injected dependency path with actual on-disk structure, Galaxy API imports initialize predictably across different filesystem behaviors.
 
 ---
 
