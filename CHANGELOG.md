@@ -4,6 +4,14 @@ All notable changes to this plugin will be documented in this file.
 
 ---
 
+## Version 2.1.5-64bit
+
+### Fixed in Version 2.1.5-64bit
+
+- **Incomplete local client data could interrupt synchronization:** The plugin now skips an owned-games or local-games update when its database is not ready, ignores processes without an executable path, and handles missing cached playtime values safely.
+
+---
+
 ## Version 2.1.4-64bit
 
 ### Overview for Version 2.1.4-64bit

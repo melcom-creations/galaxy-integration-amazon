@@ -2,6 +2,7 @@ import asyncio
 import os
 import re
 import subprocess
+from typing import Optional
 
 from galaxy.proc_tools import process_iter
 from pathlib import Path
@@ -11,15 +12,16 @@ from utils import get_uninstall_programs_list
 
 class AmazonGamesClient:
     _CLIENT_NAME_ = 'Amazon Games'
-    install_location: Path = None
+    install_location: Optional[Path] = None
 
     def __init__(self):
         self._get_install_location()
 
     def _get_install_location(self):
         for program in get_uninstall_programs_list():
-            if program['DisplayName'] == self._CLIENT_NAME_:
-                self.install_location = Path(program['InstallLocation']).resolve()
+            install_location = program.get('InstallLocation')
+            if program.get('DisplayName') == self._CLIENT_NAME_ and install_location:
+                self.install_location = Path(install_location).resolve()
                 break
 
     def update_install_location(self):
@@ -47,7 +49,10 @@ class AmazonGamesClient:
     @property
     def is_running(self):
         for proc in process_iter():
-            if proc.binary_path and Path(proc.binary_path).resolve() == self.exec_path:
+            if proc is None:
+                continue
+            binary_path = proc.binary_path
+            if binary_path and Path(binary_path).resolve() == self.exec_path:
                 return True
 
         return False
@@ -129,8 +134,11 @@ class AmazonGamesClient:
                     install_loc_check = install_loc
                 
                 for proc in process_iter():
-                    if proc.binary_path:
-                        proc_path = os.path.normpath(proc.binary_path).lower()
+                    if proc is None:
+                        continue
+                    binary_path = proc.binary_path
+                    if binary_path:
+                        proc_path = os.path.normpath(binary_path).lower()
                         # Check whether the running executable is inside the install directory.
                         if proc_path.startswith(install_loc_check):
                             return True

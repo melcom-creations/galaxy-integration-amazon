@@ -2,7 +2,7 @@
   "name": "Amazon Games plugin",
   "platform": "amazon",
   "guid": "c2cd2e29-8b02-35a9-86fc-3faf90255857",
-  "version": "2.1.4-64bit",
+  "version": "2.1.5-64bit",
   "description": "Amazon Games integration for GOG Galaxy 2.1+ (64-bit)",
   "author": "melcom",
   "url": "https://github.com/melcom-creations/galaxy-integration-amazon",

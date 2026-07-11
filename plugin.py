@@ -101,8 +101,12 @@ class AmazonGamesPlugin(Plugin):
 
     def _get_owned_games(self):
         try:
+            owned_games_db = self._owned_games_db
+            if owned_games_db is None:
+                self.logger.warning('Skipping owned-games import because the database is not initialized')
+                return None
             if self._uses_entitlements:
-                rows = self._owned_games_db.select('game_entitlements', rows=['value'])
+                rows = owned_games_db.select('game_entitlements', rows=['value'])
                 if rows is None:
                     return None
                 # Skip empty results before parsing the decrypted payload as JSON.
@@ -110,7 +114,7 @@ class AmazonGamesPlugin(Plugin):
                 game_data = [json.loads(val) for val in raw_values if val is not None]
             else:
                 # Use the legacy database when Entitlements.sqlite is not available.
-                game_data = self._owned_games_db.select('DbSet', rows=['ProductIdStr', 'ProductTitle'])
+                game_data = owned_games_db.select('DbSet', rows=['ProductIdStr', 'ProductTitle'])
                 if game_data is None:
                     return None
 
@@ -128,11 +132,15 @@ class AmazonGamesPlugin(Plugin):
             return
 
         owned_games = self._get_owned_games()
+        if owned_games is None:
+            self.logger.warning('Skipping owned-games update because the database read failed')
+            return
+        previous_owned_games = self._owned_games_cache or {}
 
-        for game_id in self._owned_games_cache.keys() - owned_games.keys():
+        for game_id in previous_owned_games.keys() - owned_games.keys():
             self.remove_game(game_id)
 
-        for game_id in (owned_games.keys() - self._owned_games_cache.keys()):
+        for game_id in (owned_games.keys() - previous_owned_games.keys()):
             self.add_game(owned_games[game_id])
         
         self._owned_games_cache = owned_games
@@ -140,7 +148,11 @@ class AmazonGamesPlugin(Plugin):
 
     def _get_local_games(self):
         try:
-            rows = self._local_games_db.select('DbSet', rows=['*'])
+            local_games_db = self._local_games_db
+            if local_games_db is None:
+                self.logger.warning('Skipping local-games import because the database is not initialized')
+                return None
+            rows = local_games_db.select('DbSet', rows=['*'])
             if rows is None:
                 return None
             
@@ -209,8 +221,11 @@ class AmazonGamesPlugin(Plugin):
 
             from galaxy.proc_tools import process_iter
             for proc in process_iter():
-                if proc.binary_path:
-                    proc_path = os.path.normpath(proc.binary_path).lower()
+                if proc is None:
+                    continue
+                binary_path = proc.binary_path
+                if binary_path:
+                    proc_path = os.path.normpath(binary_path).lower()
                     if proc_path.startswith(install_loc_check):
                         return True
         except Exception:
@@ -256,7 +271,8 @@ class AmazonGamesPlugin(Plugin):
                             time_key = f"time_{game_id}"
                             last_key = f"last_{game_id}"
                             
-                            current_total = int(self._load_cache(time_key, 0))
+                            cached_total = self._load_cache(time_key, 0)
+                            current_total = int(cached_total) if cached_total is not None else 0
                             new_total = current_total + duration_mins
                             end_timestamp = int(time())
                             
