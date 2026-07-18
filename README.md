@@ -47,6 +47,9 @@ The resulting directory structure must look like this:
 
 4. Continue with **First Start and Initial Sync** below.
 
+> [!IMPORTANT]
+> Do not place backup copies of this plugin inside the `plugins\installed` directory. GOG Galaxy scans every folder inside this directory during startup, so duplicate plugin folders can cause GUID conflicts or load an outdated version.
+
 ---
 
 ## 🚀 First Start and Initial Sync
@@ -74,14 +77,6 @@ Reset the local plugin database if synchronization problems continue after resta
 
 5. Start the Amazon Games app and keep it open.
 6. Start GOG Galaxy, reconnect the integration if necessary, select **Sync integrations** from the account menu, and wait for synchronization to finish.
-
----
-
-## ⚠️ Important
-
-Do **not** place backup copies of this plugin inside the `plugins\installed` directory.
-
-GOG Galaxy scans every folder inside this directory during startup. Duplicate plugin folders can lead to GUID conflicts or cause Galaxy to load an outdated version of the plugin.
 
 ---
 
