@@ -1,0 +1,17 @@
+{
+  "include": [
+    "*.py"
+  ],
+  "ignore": [
+    "modules"
+  ],
+  "extraPaths": [
+    "modules"
+  ],
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportMissingImports": true,
+  "reportRedeclaration": true,
+  "pythonPlatform": "Windows"
+}
